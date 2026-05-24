@@ -22,16 +22,13 @@ The UI is built for clinic operators who need to move quickly: scan the current 
 
 ## UI Screenshots
 
-```md
 ![Create call](docs/images/create-call.png)
 ![Appointments](docs/images/appointments.png)
-```
 
 ## Architecture
 
 ![Frontend architecture](docs/images/frontend-architecture.png)
 
-> Add your frontend architecture image at `docs/images/frontend-architecture.png`.
 
 The frontend is a Vite React application that communicates with the FastAPI backend over HTTP for standard dashboard actions and WebSockets for live call monitoring. API concerns are centralized in `src/api/client.js`, reusable socket behavior lives in `src/hooks/useSocket.js`, and route-level screens live in `src/pages`.
 
