@@ -26,7 +26,7 @@ export function MainLayout() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 font-semibold tracking-tight">
               <div className="h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_0_6px_hsl(var(--primary)/0.12)]" />
-              Maya Health Voice
+              Maya Voice Agent
             </div>
             <button
               type="button"

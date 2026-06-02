@@ -28,7 +28,6 @@ export function Appointments() {
       const matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
       const haystack = [
         appointment.patient_name,
-        appointment.phone_number,
         appointment.doctor_name,
         appointment.appointment_date,
         appointment.appointment_time,
@@ -49,7 +48,7 @@ export function Appointments() {
           <div className="grid gap-3 md:grid-cols-[1fr_220px]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search patient, phone, doctor..." value={query} onChange={(event) => setQuery(event.target.value)} />
+              <Input className="pl-9" placeholder="Search patient, doctor, status..." value={query} onChange={(event) => setQuery(event.target.value)} />
             </div>
             <Select
               value={statusFilter}
@@ -78,7 +77,7 @@ export function Appointments() {
                   <tr key={appointment.id} className="table-row">
                     <td className="px-4 py-3">
                       <div className="font-medium text-foreground">{appointment.patient_name}</div>
-                      <div className="text-xs text-muted-foreground">{appointment.phone_number}</div>
+                      <div className="text-xs text-muted-foreground">{appointment.notes || "No notes"}</div>
                     </td>
                     <td className="px-4 py-3 text-sm text-card-foreground/75">Dr. {appointment.doctor_name}</td>
                     <td className="px-4 py-3 text-sm text-card-foreground/75">{appointment.appointment_date} {appointment.appointment_time}</td>

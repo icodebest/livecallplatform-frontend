@@ -1,6 +1,6 @@
-import { Activity, CalendarCheck, Clock3, PhoneCall, TriangleAlert } from "lucide-react";
+import { Activity, CalendarCheck, Clock3, Mic2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import { dashboardApi, callsApi } from "../api/client";
+import { dashboardApi, sessionsApi } from "../api/client";
 import { CallCard } from "../components/CallCard";
 import { PageHeader } from "../components/PageHeader";
 import { StatsCard } from "../components/StatsCard";
@@ -8,11 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 
 export function Dashboard() {
   const [stats, setStats] = useState(null);
-  const [calls, setCalls] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
     dashboardApi.stats().then(setStats).catch(() => setStats(null));
-    callsApi.list().then(setCalls).catch(() => setCalls([]));
+    sessionsApi.list().then(setSessions).catch(() => setSessions([]));
   }, []);
 
   const systemStats = stats?.systems || {
@@ -22,14 +22,14 @@ export function Dashboard() {
 
   return (
     <div className="page-shell">
-      <PageHeader title="Operations Dashboard" description="Monitor appointment calls, AI performance, and outcomes." />
+      <PageHeader title="Operations Dashboard" description="Monitor browser voice sessions, AI performance, and appointment outcomes." />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatsCard label="Total Calls" value={stats?.total_calls} icon={PhoneCall} />
-        <StatsCard label="Active Calls" value={stats?.active_calls} icon={Activity} />
+        <StatsCard label="Total Sessions" value={stats?.total_sessions} icon={Mic2} />
+        <StatsCard label="Active Sessions" value={stats?.active_sessions} icon={Activity} />
         <StatsCard label="Confirmed" value={stats?.confirmed_appointments} icon={CalendarCheck} />
         <StatsCard label="Rescheduled" value={stats?.rescheduled_appointments} icon={Clock3} />
-        <StatsCard label="Failed Calls" value={stats?.failed_calls} icon={TriangleAlert} />
+        <StatsCard label="Failed Sessions" value={stats?.failed_sessions} icon={TriangleAlert} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -51,7 +51,7 @@ export function Dashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Calls</CardTitle>
+          <CardTitle>Recent Sessions</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -66,8 +66,8 @@ export function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {calls.slice(0, 6).map((call) => <CallCard key={call.id} call={call} />)}
-                {calls.length === 0 && <tr><td className="px-4 py-8 text-sm text-muted-foreground" colSpan="5">No calls yet.</td></tr>}
+                {sessions.slice(0, 6).map((session) => <CallCard key={session.id} call={session} />)}
+                {sessions.length === 0 && <tr><td className="px-4 py-8 text-sm text-muted-foreground" colSpan="5">No sessions yet.</td></tr>}
               </tbody>
             </table>
           </div>

@@ -1,43 +1,51 @@
-# LiveCallPlatform Frontend
+# Maya Voice Agent Frontend
 
-React dashboard for managing AI-assisted healthcare appointment calls. The app gives clinic teams a focused workspace for launching calls, monitoring live conversations, reviewing transcripts, and tracking appointment outcomes.
+React dashboard for browser-native AI voice sessions in healthcare appointment operations. Clinic teams can create patient sessions, choose an AI architecture, speak with the AI assistant through the browser microphone, monitor transcripts, review summaries, and manage appointment outcomes.
+
+This branch replaces Twilio phone-call UI with web-based AI voice sessions.
 
 ![Dashboard screenshot](docs/images/dashboard.png)
 
-> Add your main dashboard screenshot at `docs/images/dashboard.png`.
+## Real Use Case
+
+Maya Voice Agent is designed for a real clinic workflow where staff repeatedly call patients to confirm appointments, collect reschedule preferences, answer basic logistics questions, and update appointment records. The original production version used Twilio Voice for real outbound automated calls to patients. The AI agent handled the conversation, produced transcripts and summaries, updated outcomes, and escalated uncertain or sensitive cases to humans.
+
+This branch keeps that same workflow but turns it into a browser-native demo experience. A reviewer can create a patient session, speak with the AI in the web app, and see the same transcript, summary, outcome, appointment update, and analytics flow without needing a live phone number.
 
 ## Product Experience
 
-LiveCallPlatform turns appointment calling into a clear operations workflow. The dashboard shows call volume and AI system performance, the create-call flow captures patient and appointment details, and the call detail screen brings together transcript, summary, outcome, latency, and live monitoring in one place.
+Maya Voice Agent turns repetitive appointment confirmation and rescheduling into a guided AI workflow. A clinic operator creates a patient session, selects Realtime AI or Modular AI, starts a browser voice session, and reviews the final transcript, summary, sentiment, outcome, and appointment update.
 
-The UI is built for clinic operators who need to move quickly: scan the current state, start the next call, identify failed or pending follow-ups, and understand what happened in every patient conversation without digging through raw provider logs.
+The UI is designed for healthcare operations teams who need to quickly launch sessions, monitor live AI conversations, identify failed or escalated interactions, and keep appointment records current.
 
 ## Screens
 
-- **Dashboard**: call statistics, recent activity, and AI system analytics.
-- **Create Call**: patient details, appointment context, and AI system selection.
-- **Call History**: searchable call records with status, outcome, and timestamps.
-- **Call Detail**: transcript, summary, appointment update, latency, and live monitor socket.
-- **Appointments**: appointment management for confirmed, rescheduled, scheduled, failed, and pending follow-ups.
+- **Authentication**: signup, login, email OTP verification, and session persistence.
+- **Dashboard**: session totals, active sessions, appointment outcomes, and AI system analytics.
+- **Create Session**: patient details, appointment context, preferred language, and AI system selection.
+- **Voice Session Room**: browser microphone controls, live transcript, active speaker, duration, latency, AI audio playback, and end-session flow.
+- **Session History**: searchable completed sessions with transcripts, summaries, outcomes, AI system used, duration, and latency.
+- **Appointments**: upcoming, confirmed, rescheduled, cancelled, and failed appointment management.
 
 ## UI Screenshots
 
-![Create call](docs/images/create-call.png)
+![Create session](docs/images/create-call.png)
 ![Appointments](docs/images/appointments.png)
 
 ## Architecture
 
 ![Frontend architecture](docs/images/frontend-architecture.png)
 
-
-The frontend is a Vite React application that communicates with the FastAPI backend over HTTP for standard dashboard actions and WebSockets for live call monitoring. API concerns are centralized in `src/api/client.js`, reusable socket behavior lives in `src/hooks/useSocket.js`, and route-level screens live in `src/pages`.
+The frontend is a Vite React application that communicates with the FastAPI backend over HTTP for authenticated CRUD workflows and WebSockets for voice-session audio.
 
 At a high level:
 
-- React Router controls the dashboard, calls, call detail, create-call, and appointments pages.
-- Axios sends REST requests to the backend API.
-- WebSocket connections stream live transcript and call-monitoring events.
-- TailwindCSS and local UI components keep the interface consistent across operational screens.
+- React Router controls protected app routes and public auth routes.
+- Axios sends authenticated REST requests with JWT bearer tokens.
+- Browser `MediaRecorder` captures modular audio segments.
+- Browser `AudioContext` captures PCM audio for Realtime AI and plays AI responses.
+- WebSocket connections stream microphone audio and receive audio, transcript, speaker, latency, duration, and completion events.
+- TailwindCSS and local UI components keep the interface consistent across the dashboard.
 
 ## Tech Stack
 
@@ -46,6 +54,9 @@ At a high level:
 - TailwindCSS
 - React Router
 - Axios
+- WebSockets
+- Browser MediaRecorder
+- Browser AudioContext
 - Lucide icons
 - Local shadcn-style UI components
 
@@ -76,15 +87,22 @@ VITE_API_URL=http://localhost:8000
 ```bash
 npm run dev
 npm run build
+npm run preview
 ```
 
 ## Backend Connection
 
 The frontend expects the backend to be available at `VITE_API_URL`. For local development, start the backend on `http://localhost:8000`, then start this app on `http://localhost:5173`.
 
-Live monitoring uses the same base URL converted to WebSocket protocol. For example:
+The voice WebSocket URL is derived from the same base URL:
 
 ```text
 http://localhost:8000 -> ws://localhost:8000
 https://api.example.com -> wss://api.example.com
 ```
+
+## Architecture Image Prompt
+
+Use this prompt to regenerate and replace `frontend/docs/images/frontend-architecture.png`.
+
+Create a clean SaaS frontend architecture diagram for a browser-native healthcare AI voice agent. Style: modern dark dashboard diagram, teal and amber accent colors, crisp readable labels, no cartoons, no 3D. Show these frontend sections: Public Auth Pages (Login, Signup, Email Verification), Protected App Layout, Dashboard, Create Session, Voice Session Room, Session History, Appointment Management. Show shared modules: API Client with JWT, Auth Context, WebSocket Voice Client, MediaRecorder for modular audio, AudioContext for realtime PCM capture and AI audio playback, reusable UI components. Show connections to FastAPI REST APIs and FastAPI Voice WebSocket. Include events flowing back into Voice Session Room: transcript, audio, active speaker, duration, latency, completed summary. Export as 16:9 PNG with high contrast and readable text.

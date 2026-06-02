@@ -1,24 +1,34 @@
-import { Activity, CalendarDays, History, PhoneCall } from "lucide-react";
+import { Activity, CalendarDays, History, LogOut, Mic2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { cn } from "../lib/utils";
 
 const links = [
   { to: "/", label: "Dashboard", icon: Activity },
-  { to: "/calls", label: "Calls", icon: History },
-  { to: "/calls/new", label: "Create Call", icon: PhoneCall },
+  { to: "/sessions", label: "Sessions", icon: History },
+  { to: "/sessions/new", label: "Create Session", icon: Mic2 },
   { to: "/appointments", label: "Appointments", icon: CalendarDays }
 ];
 
 export function Navbar({ className = "", onNavigate }) {
+  const { user, logout } = useAuth();
+  const [remaining, setRemaining] = useState(() => getRemaining(user?.trial_expires_at));
+  useEffect(() => {
+    const update = () => setRemaining(getRemaining(user?.trial_expires_at));
+    update();
+    const timer = setInterval(update, 1_000);
+    return () => clearInterval(timer);
+  }, [user?.trial_expires_at]);
   return (
     <aside className={cn("flex h-full w-64 flex-col border-r border-border/70 bg-card/72 backdrop-blur-xl", className)}>
       <div className="border-b border-border/70 px-5 py-5">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--accent)))] text-background shadow-lg shadow-primary/10">
-            <PhoneCall className="h-5 w-5" />
+            <Mic2 className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-lg font-semibold tracking-tight text-foreground">Maya Health Voice</div>
+            <div className="text-lg font-semibold tracking-tight text-foreground">Maya Voice Agent</div>
             <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">AI appointment operations</div>
           </div>
         </div>
@@ -43,10 +53,26 @@ export function Navbar({ className = "", onNavigate }) {
         ))}
       </nav>
       <div className="border-t border-border/70 px-5 py-4">
-        <div className="rounded-2xl border border-border/70 bg-muted/40 px-4 py-3 text-xs leading-5 text-muted-foreground">
-          Realtime calls, transcripts, and appointment outcomes in one premium workspace.
+        <div className="space-y-3 rounded-2xl border border-border/70 bg-muted/40 px-4 py-3 text-xs leading-5 text-muted-foreground">
+          <div>
+            <div className="font-semibold text-foreground">Demo Access Remaining</div>
+            <div className="mt-1 text-primary">{remaining}</div>
+          </div>
+          <button type="button" onClick={logout} className="inline-flex items-center gap-2 text-card-foreground/80 hover:text-foreground">
+            <LogOut className="h-3.5 w-3.5" /> Logout
+          </button>
         </div>
       </div>
     </aside>
   );
+}
+
+function getRemaining(value) {
+  if (!value) return "Not activated";
+  const ms = new Date(value).getTime() - Date.now();
+  if (ms <= 0) return "Expired";
+  const hours = Math.floor(ms / 3_600_000).toString().padStart(2, "0");
+  const minutes = Math.floor((ms % 3_600_000) / 60_000).toString().padStart(2, "0");
+  const seconds = Math.floor((ms % 60_000) / 1_000).toString().padStart(2, "0");
+  return `${hours}h ${minutes}m ${seconds}s`;
 }
