@@ -100,9 +100,3 @@ The voice WebSocket URL is derived from the same base URL:
 http://localhost:8000 -> ws://localhost:8000
 https://api.example.com -> wss://api.example.com
 ```
-
-## Architecture Image Prompt
-
-Use this prompt to regenerate and replace `frontend/docs/images/frontend-architecture.png`.
-
-Create a clean SaaS frontend architecture diagram for a browser-native healthcare AI voice agent. Style: modern dark dashboard diagram, teal and amber accent colors, crisp readable labels, no cartoons, no 3D. Show these frontend sections: Public Auth Pages (Login, Signup, Email Verification), Protected App Layout, Dashboard, Create Session, Voice Session Room, Session History, Appointment Management. Show shared modules: API Client with JWT, Auth Context, WebSocket Voice Client, MediaRecorder for modular audio, AudioContext for realtime PCM capture and AI audio playback, reusable UI components. Show connections to FastAPI REST APIs and FastAPI Voice WebSocket. Include events flowing back into Voice Session Room: transcript, audio, active speaker, duration, latency, completed summary. Export as 16:9 PNG with high contrast and readable text.
