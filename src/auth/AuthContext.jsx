@@ -2,6 +2,13 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { authApi, TOKEN_KEY } from "../api/client";
 
 const AuthContext = createContext(null);
+const TIMEZONE_PATTERN = /(?:Z|[+-]\d{2}:?\d{2})$/;
+
+function parseUtcTimestamp(value) {
+  if (!value) return Number.NaN;
+  const timestamp = TIMEZONE_PATTERN.test(value) ? value : `${value}Z`;
+  return new Date(timestamp).getTime();
+}
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
@@ -29,8 +36,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!user?.trial_expires_at) return undefined;
-    const expiresAt = new Date(user.trial_expires_at).getTime();
+    const expiresAt = parseUtcTimestamp(user.trial_expires_at);
     const ms = expiresAt - Date.now();
+    if (!Number.isFinite(ms)) return undefined;
     if (ms <= 0) {
       logout();
       return undefined;
