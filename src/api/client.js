@@ -44,7 +44,8 @@ export const authApi = {
   login: (payload) => api.post("/auth/login", payload).then((res) => authSession(res.data)),
   forgotPassword: (payload) => api.post("/auth/forgot-password", payload).then((res) => apiMessage(res.data)),
   resetPassword: (payload) => api.post("/auth/reset-password", payload).then((res) => apiMessage(res.data)),
-  me: () => api.get("/auth/me").then((res) => res.data)
+  me: (token = localStorage.getItem(TOKEN_KEY)) =>
+    api.get("/auth/me", token ? { headers: { Authorization: `Bearer ${token}` } } : undefined).then((res) => res.data)
 };
 
 export const sessionsApi = {

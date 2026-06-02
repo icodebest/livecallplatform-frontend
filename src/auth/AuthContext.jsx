@@ -14,14 +14,18 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    authApi.me()
+    if (user) {
+      setLoading(false);
+      return;
+    }
+    authApi.me(token)
       .then((data) => {
         setUser(data);
         setAuthError("");
       })
       .catch((err) => logout(err?.response?.data?.detail || err?.message || "Your session expired. Please login again."))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, user]);
 
   useEffect(() => {
     if (!user?.trial_expires_at) return undefined;
