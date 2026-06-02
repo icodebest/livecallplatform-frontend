@@ -24,7 +24,7 @@ export function Login() {
       applySession(data);
       navigate("/");
     } catch (err) {
-      setError(err?.response?.data?.detail || "Unable to login");
+      setError(err?.response?.data?.detail || err?.message || "Unable to login");
     } finally {
       setSaving(false);
     }

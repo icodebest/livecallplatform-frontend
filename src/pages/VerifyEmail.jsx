@@ -24,7 +24,7 @@ export function VerifyEmail() {
       applySession(data);
       navigate("/");
     } catch (err) {
-      setError(err?.response?.data?.detail || "Unable to verify email");
+      setError(err?.response?.data?.detail || err?.message || "Unable to verify email");
     } finally {
       setSaving(false);
     }

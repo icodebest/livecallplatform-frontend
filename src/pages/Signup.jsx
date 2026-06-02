@@ -21,7 +21,7 @@ export function Signup() {
       await authApi.signup(form);
       navigate(`/verify?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
-      setError(err?.response?.data?.detail || "Unable to create account");
+      setError(err?.response?.data?.detail || err?.message || "Unable to create account");
     } finally {
       setSaving(false);
     }
