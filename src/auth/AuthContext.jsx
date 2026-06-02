@@ -7,13 +7,20 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(Boolean(token));
+  const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     if (!token) {
       setLoading(false);
       return;
     }
-    authApi.me().then(setUser).catch(() => logout()).finally(() => setLoading(false));
+    authApi.me()
+      .then((data) => {
+        setUser(data);
+        setAuthError("");
+      })
+      .catch((err) => logout(err?.response?.data?.detail || err?.message || "Your session expired. Please login again."))
+      .finally(() => setLoading(false));
   }, [token]);
 
   useEffect(() => {
@@ -32,15 +39,22 @@ export function AuthProvider({ children }) {
     localStorage.setItem(TOKEN_KEY, data.access_token);
     setToken(data.access_token);
     setUser(data.user);
+    setAuthError("");
+    setLoading(false);
   }
 
-  function logout() {
+  function logout(reason = "") {
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);
     setUser(null);
+    setAuthError(reason);
+    setLoading(false);
   }
 
-  const value = useMemo(() => ({ token, user, loading, applySession, logout, authenticated: Boolean(token && user) }), [token, user, loading]);
+  const value = useMemo(
+    () => ({ token, user, loading, authError, applySession, logout, authenticated: Boolean(token) }),
+    [token, user, loading, authError]
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

@@ -12,7 +12,7 @@ export function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const { applySession } = useAuth();
+  const { applySession, authError } = useAuth();
   const navigate = useNavigate();
 
   async function submit(event) {
@@ -38,7 +38,7 @@ export function Login() {
         <div className="text-right">
           <Link className="text-sm text-primary hover:text-primary/80" to="/forgot-password">Forgot password?</Link>
         </div>
-        {error && <div className="rounded-2xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+        {(error || authError) && <div className="rounded-2xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">{error || authError}</div>}
         <Button type="submit" disabled={saving} className="w-full"><LogIn className="h-4 w-4" /> {saving ? "Signing in..." : "Login"}</Button>
         <p className="text-center text-sm text-muted-foreground">New here? <Link className="text-primary" to="/signup">Create account</Link></p>
       </form>
