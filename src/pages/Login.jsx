@@ -1,7 +1,7 @@
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authApi } from "../api/client";
+import { apiErrorMessage, authApi } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
@@ -24,7 +24,7 @@ export function Login() {
       applySession(data);
       navigate("/");
     } catch (err) {
-      setError(err?.response?.data?.detail || err?.message || "Unable to login");
+      setError(apiErrorMessage(err, "Unable to login"));
     } finally {
       setSaving(false);
     }

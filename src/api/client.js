@@ -4,6 +4,11 @@ function normalizeBaseUrl(url) {
   return url.replace(/\/+$/, "");
 }
 
+function defaultApiUrl() {
+  if (import.meta.env.DEV) return "http://localhost:8000";
+  return `${window.location.origin}/api`;
+}
+
 function ensureJsonObject(data, message) {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     throw new Error(message);
@@ -23,9 +28,21 @@ function apiMessage(data) {
   return ensureJsonObject(data, "The auth API did not return JSON. Check VITE_API_URL and backend /api routing.");
 }
 
-export const API_BASE_URL = normalizeBaseUrl(import.meta.env.VITE_API_URL || "http://localhost:8000");
+export const API_BASE_URL = normalizeBaseUrl(import.meta.env.VITE_API_URL?.trim() || defaultApiUrl());
 export const WS_BASE_URL = API_BASE_URL.replace(/^http/, "ws");
 export const TOKEN_KEY = "maya_access_token";
+
+export function apiErrorMessage(error, fallback = "Request failed") {
+  const detail = error?.response?.data?.detail;
+  if (Array.isArray(detail)) {
+    return detail.map((item) => item.msg || item.message || "Invalid field").join(", ");
+  }
+  if (detail) return detail;
+  if (error?.request && !error?.response) {
+    return `Could not reach the API at ${API_BASE_URL}. Check VITE_API_URL and backend CORS settings.`;
+  }
+  return error?.message || fallback;
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

@@ -1,7 +1,7 @@
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authApi } from "../api/client";
+import { apiErrorMessage, authApi } from "../api/client";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { PasswordInput } from "../components/ui/PasswordInput";
@@ -21,7 +21,7 @@ export function Signup() {
       await authApi.signup(form);
       navigate(`/verify?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
-      setError(err?.response?.data?.detail || err?.message || "Unable to create account");
+      setError(apiErrorMessage(err, "Unable to create account"));
     } finally {
       setSaving(false);
     }

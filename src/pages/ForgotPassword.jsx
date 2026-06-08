@@ -1,7 +1,7 @@
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authApi } from "../api/client";
+import { apiErrorMessage, authApi } from "../api/client";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { AuthShell } from "./Login";
@@ -23,7 +23,7 @@ export function ForgotPassword() {
       setMessage(data.message || "Password reset code sent.");
       window.setTimeout(() => navigate(`/reset-password?email=${encodeURIComponent(email)}`), 600);
     } catch (err) {
-      setError(err?.response?.data?.detail || "Unable to send reset code");
+      setError(apiErrorMessage(err, "Unable to send reset code"));
     } finally {
       setSaving(false);
     }

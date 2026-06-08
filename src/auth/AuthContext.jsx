@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { authApi, TOKEN_KEY } from "../api/client";
+import { apiErrorMessage, authApi, TOKEN_KEY } from "../api/client";
 
 const AuthContext = createContext(null);
 const TIMEZONE_PATTERN = /(?:Z|[+-]\d{2}:?\d{2})$/;
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
         setUser(data);
         setAuthError("");
       })
-      .catch((err) => logout(err?.response?.data?.detail || err?.message || "Your session expired. Please login again."))
+      .catch((err) => logout(apiErrorMessage(err, "Your session expired. Please login again.")))
       .finally(() => setLoading(false));
   }, [token, user]);
 

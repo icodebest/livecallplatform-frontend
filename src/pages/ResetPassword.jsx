@@ -1,7 +1,7 @@
 import { KeyRound } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { authApi } from "../api/client";
+import { apiErrorMessage, authApi } from "../api/client";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { PasswordInput } from "../components/ui/PasswordInput";
@@ -22,7 +22,7 @@ export function ResetPassword() {
       await authApi.resetPassword(form);
       navigate("/login");
     } catch (err) {
-      setError(err?.response?.data?.detail || "Unable to reset password");
+      setError(apiErrorMessage(err, "Unable to reset password"));
     } finally {
       setSaving(false);
     }
