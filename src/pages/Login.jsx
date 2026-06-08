@@ -22,7 +22,7 @@ export function Login() {
     try {
       const data = await authApi.login(form);
       applySession(data);
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (err) {
       setError(apiErrorMessage(err, "Unable to login"));
     } finally {

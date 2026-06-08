@@ -18,6 +18,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!token) {
+      setUser(null);
       setLoading(false);
       return;
     }
@@ -25,13 +26,26 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    authApi.me(token)
+    const sessionToken = token;
+    let cancelled = false;
+    authApi.me(sessionToken)
       .then((data) => {
+        if (cancelled || localStorage.getItem(TOKEN_KEY) !== sessionToken) return;
         setUser(data);
         setAuthError("");
       })
-      .catch((err) => logout(apiErrorMessage(err, "Your session expired. Please login again.")))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (cancelled || localStorage.getItem(TOKEN_KEY) !== sessionToken) return;
+        logout(apiErrorMessage(err, "Your session expired. Please login again."));
+      })
+      .finally(() => {
+        if (!cancelled && localStorage.getItem(TOKEN_KEY) === sessionToken) {
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [token, user]);
 
   useEffect(() => {
