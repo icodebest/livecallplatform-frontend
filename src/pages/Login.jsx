@@ -1,5 +1,5 @@
 import { LogIn } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiErrorMessage, authApi } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
@@ -12,8 +12,12 @@ export function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const { applySession, authError } = useAuth();
+  const { applySession, authError, authenticated } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authenticated) navigate("/", { replace: true });
+  }, [authenticated, navigate]);
 
   async function submit(event) {
     event.preventDefault();
@@ -22,7 +26,7 @@ export function Login() {
     try {
       const data = await authApi.login(form);
       applySession(data);
-      navigate("/", { replace: true });
+      window.location.replace("/");
     } catch (err) {
       setError(apiErrorMessage(err, "Unable to login"));
     } finally {

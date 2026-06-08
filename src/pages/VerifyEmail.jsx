@@ -1,6 +1,6 @@
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { apiErrorMessage, authApi } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { Button } from "../components/ui/Button";
@@ -13,7 +13,6 @@ export function VerifyEmail() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const { applySession } = useAuth();
-  const navigate = useNavigate();
 
   async function submit(event) {
     event.preventDefault();
@@ -22,7 +21,7 @@ export function VerifyEmail() {
     try {
       const data = await authApi.verify(form);
       applySession(data);
-      navigate("/");
+      window.location.replace("/");
     } catch (err) {
       setError(apiErrorMessage(err, "Unable to verify email"));
     } finally {
